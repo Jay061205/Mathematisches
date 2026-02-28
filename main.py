@@ -34,13 +34,35 @@ def get_primes(limit: int) -> list[int]:
             primes.append(n)
     return primes
 
+def get_fibonacci(limit: int) -> list[int]:
+    fibs = []
+    a, b = 0, 1
+    while a < limit:
+        fibs.append(a) 
+        a, b = a + b, a
+    return fibs
+
+def get_evens(limit: int) -> list[int]:
+    return [n for n in range(0, limit, 2)]
+
+def get_odds(limit: int) -> list[int]:
+    return [n for n in range(1, limit, 2)]
+
+def get_binary_palindromes(limit: int) -> list[int]:
+    palindromes = []
+    for n in range(limit):
+        b = bin(n)[2:]  # strip the '0b' prefix
+        if b == b[::-1]: # check if b is a palindrome
+            palindromes.append(n)
+    return palindromes
+
 def draw(commands):
     width_margin = 1100
     height_margin = 700
 
     min_x, max_x, min_y, max_y = compute_bounds(commands)  # step=1 always
-    bounds_w = max_x - min_x
-    bounds_h = max_y - min_y
+    bounds_w = max(max_x - min_x, 0.0001)
+    bounds_h = max(max_y - min_y, 0.0001)
 
     step = min(width_margin / bounds_w, height_margin / bounds_h)  # now step is defined
 
@@ -65,6 +87,18 @@ def draw(commands):
             t.left(60)
 
     turtle.done()
+def generate_commands_from_sequence(numbers: list[int]) -> list[str]:
+    commands = []
+    for n in numbers:
+        ones = bin(n).count("1")
+        command = "F" if ones % 2 == 0 else "T"
+        commands.append(command)
+    return commands
 
-cmds = generate_commands(4096)
+pri = get_primes(4096)
+fib = get_fibonacci(10**18)
+even = get_evens(1000)
+odds = get_odds(4096)
+pali = get_binary_palindromes(10**6)
+cmds = generate_commands_from_sequence(pali)
 draw(cmds)
